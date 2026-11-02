@@ -56,8 +56,16 @@ bool bh_linker_elf_is_match(const char *linker_elf_name, const char *external_el
 // NPatch vendors bhook without ShadowHook at all (see bh_task_manager.c and
 // CMakeLists.txt), so the first path is never available on any ABI -- force the same
 // "not support" fallback arm/arm64 would otherwise only take on pre-Lollipop targets.
+#if !defined(BH_NO_SHADOWHOOK) && (defined(__aarch64__) || defined(__arm__))
+#define BH_LINKER_MAYBE_SUPPORT_DL_INIT_FINI_MONITOR 1
+#else
 #define BH_LINKER_MAYBE_SUPPORT_DL_INIT_FINI_MONITOR 0
+#endif
+#if !defined(BH_NO_SHADOWHOOK) && (defined(__aarch64__) || (defined(__arm__) && __ANDROID_API__ >= __ANDROID_API_L__))
+#define BH_LINKER_MAYBE_NOT_SUPPORT_DL_INIT_FINI_MONITOR 0
+#else
 #define BH_LINKER_MAYBE_NOT_SUPPORT_DL_INIT_FINI_MONITOR 1
+#endif
 
 // used to check confirmed-support for dl-init-fini-monitor at runtime
 bool bh_linker_is_support_dl_init_fini_monitor(void);
