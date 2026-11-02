@@ -199,15 +199,7 @@ bool bh_linker_elf_is_match(const char *linker_elf_name, const char *external_el
 }
 
 bool bh_linker_is_support_dl_init_fini_monitor(void) {
-#if defined(__aarch64__)
-  return true;
-#elif defined(__arm__)
-#if __ANDROID_API__ >= __ANDROID_API_L__
-  return true;
-#else
-  return bh_util_get_api_level() >= __ANDROID_API_L__;
-#endif
-#else
+  // Always the dl_open/dl_close monitor: NPatch vendors bhook without ShadowHook, so the
+  // alternative this would otherwise pick on ARM/ARM64 is never available. See bh_linker.h.
   return false;
-#endif
 }
